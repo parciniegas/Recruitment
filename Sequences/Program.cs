@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
+
 builder.Services.AddApiVersioning(
         options =>
         {
@@ -19,6 +21,8 @@ builder.Services.AddApiVersioning(
             // automatically applies an api version based on the name of the defining controller's namespace
             options.Conventions.Add(new VersionByNamespaceConvention());
         });
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<Context>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -48,5 +52,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();

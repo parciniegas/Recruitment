@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sequences.Data.Clients.Entities
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Client
     {
         #region Constuctors

@@ -1,4 +1,5 @@
-﻿using Sequences.Data.Clients.Entities;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Sequences.Data.Clients.Entities;
 
 namespace Sequences.Data.Clients
 {
@@ -11,6 +12,8 @@ namespace Sequences.Data.Clients
         Client Add(Client client);
 
         Client Update(Client client);
+
+        Client Update(int id, JsonPatchDocument client);
 
         void Delete(int id);
     }

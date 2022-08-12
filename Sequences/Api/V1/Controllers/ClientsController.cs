@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Sequences.Data.Exceptions;
 using Sequences.Services.Clients;
 
@@ -93,6 +94,29 @@ namespace Sequences.Api.V1.Controllers
             try
             {
                 client = _service.Update(client);
+                return Ok(client);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogError(message: "Controller: {Controller} Action: {Action}, Exception: {Message} StackTrace: {StackTrace}",
+                   ControllerContext.ActionDescriptor.ControllerName, ControllerContext.ActionDescriptor.ActionName, ex.Message, ex.StackTrace);
+                return Problem("client not found", statusCode: StatusCodes.Status404NotFound);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(message: "Controller: {Controller} Action: {Action}, Exception: {Message} StackTrace: {StackTrace}",
+                   ControllerContext.ActionDescriptor.ControllerName, ControllerContext.ActionDescriptor.ActionName, ex.Message, ex.StackTrace);
+                return Problem("could not update customer", statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [Produces(contentType: "application/json")]
+        public ActionResult<Client> UpdateOrCreate([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
+        {
+            try
+            {
+                var client = _service.Update(id, clientDocument);
                 return Ok(client);
             }
             catch (EntityNotFoundException ex)

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using Sequences.Data.Clients.Entities;
 using Sequences.Data.Exceptions;
 
@@ -62,6 +63,19 @@ namespace Sequences.Data.Clients
             _context.SaveChanges();
 
             return client;
+        }
+
+        public Client Update(int id, JsonPatchDocument client)
+        {
+            var curClient = _context.Clients.Find(id);
+            if (curClient == null)
+            {
+                throw new EntityNotFoundException($"Client with id {id} not found");
+            }
+            client.ApplyTo(curClient);
+            _context.SaveChanges();
+
+            return curClient;
         }
     }
 }

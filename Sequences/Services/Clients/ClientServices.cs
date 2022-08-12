@@ -1,4 +1,5 @@
-﻿using Sequences.Data.Clients;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Sequences.Data.Clients;
 
 namespace Sequences.Services.Clients
 {
@@ -53,6 +54,14 @@ namespace Sequences.Services.Clients
             var dbClient = new Data.Clients.Entities.Client(client.Id, client.Name, client.Description);
             var _client = _repository.Update(dbClient);
             (client.Id, client.Name, client.Description) = (_client.Id, _client.Name, _client.Description);
+
+            return client;
+        }
+
+        public Client Update(int id, JsonPatchDocument clientDocument)
+        {
+            var dbClient = _repository.Update(id, clientDocument);
+            var client = new Client(dbClient.Id, dbClient.Name, dbClient.Description);
 
             return client;
         }
