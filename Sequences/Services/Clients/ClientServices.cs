@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Sequences.Data.Clients;
+﻿using Sequences.Data.Clients;
 
 namespace Sequences.Services.Clients
 {
@@ -8,14 +6,14 @@ namespace Sequences.Services.Clients
     {
         #region Private Felds
 
-        private readonly Logger<ClientServices> _logger;
+        private readonly ILogger<ClientServices> _logger;
         private readonly IClientRepository _repository;
 
         #endregion Private Felds
 
         #region Constructors
 
-        public ClientServices(Logger<ClientServices> logger, IClientRepository repository)
+        public ClientServices(ILogger<ClientServices> logger, IClientRepository repository)
         {
             _logger = logger;
             _repository = repository;
