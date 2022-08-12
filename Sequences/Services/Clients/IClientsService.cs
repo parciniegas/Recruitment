@@ -4,16 +4,16 @@ namespace Sequences.Services.Clients
 {
     public interface IClientsService
     {
-        List<Client> GetClients();
+        Task<List<Client>> GetClients();
 
-        Client GetClientById(int id);
+        Task<Client> GetClientById(int id);
 
-        Client Add(Client client);
+        Task<Client> Add(Client client);
 
-        Client Update(Client client);
+        Task<Client> Update(Client client);
 
-        Client Update(int id, JsonPatchDocument clientDocument);
+        Task<Client> Update(int id, JsonPatchDocument clientDocument);
 
-        void Delete(int id);
+        Task Delete(int id);
     }
 }

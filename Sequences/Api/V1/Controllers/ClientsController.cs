@@ -28,11 +28,12 @@ namespace Sequences.Api.V1.Controllers
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(IEnumerable<Client>), statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public ActionResult<List<Client>> GetClients()
+        public async Task<ActionResult<List<Client>>> GetClientsAsync()
         {
             try
             {
-                return _service.GetClients();
+                var clients = await _service.GetClients();
+                return clients;
             }
             catch (Exception ex)
             {
@@ -47,11 +48,11 @@ namespace Sequences.Api.V1.Controllers
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public ActionResult<Client> GetClientById(int id)
+        public async Task<ActionResult<Client>> GetClientById(int id)
         {
             try
             {
-                var clients = _service.GetClientById(id);
+                var clients = await _service.GetClientById(id);
                 return Ok(clients);
             }
             catch (EntityNotFoundException ex)
@@ -72,11 +73,11 @@ namespace Sequences.Api.V1.Controllers
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public ActionResult<Client> Add([FromBody] Client client)
+        public async Task<ActionResult<Client>> Add([FromBody] Client client)
         {
             try
             {
-                client = _service.Add(client);
+                client = await _service.Add(client);
                 return Ok(client);
             }
             catch (Exception ex)
@@ -89,11 +90,11 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpPut]
         [Produces(contentType: "application/json")]
-        public ActionResult<Client> Update([FromBody] Client client)
+        public async Task<ActionResult<Client>> Update([FromBody] Client client)
         {
             try
             {
-                client = _service.Update(client);
+                client = await _service.Update(client);
                 return Ok(client);
             }
             catch (EntityNotFoundException ex)
@@ -112,11 +113,11 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpPatch("{id}")]
         [Produces(contentType: "application/json")]
-        public ActionResult<Client> UpdateOrCreate([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
+        public async Task<ActionResult<Client>> UpdateOrCreate([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
         {
             try
             {
-                var client = _service.Update(id, clientDocument);
+                var client = await _service.Update(id, clientDocument);
                 return Ok(client);
             }
             catch (EntityNotFoundException ex)
@@ -138,11 +139,11 @@ namespace Sequences.Api.V1.Controllers
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public ActionResult<string> Delete(int id)
+        public async Task<ActionResult<string>> Delete(int id)
         {
             try
             {
-                _service.Delete(id);
+                await _service.Delete(id);
                 return Ok(new { result = "client deleted" });
             }
             catch (EntityNotFoundException ex)

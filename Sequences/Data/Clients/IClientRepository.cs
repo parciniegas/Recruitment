@@ -5,16 +5,16 @@ namespace Sequences.Data.Clients
 {
     public interface IClientRepository
     {
-        IEnumerable<Client> GetAll();
+        Task<List<Client>> GetAll();
 
-        Client GetById(int id);
+        Task<Client> GetById(int id);
 
-        Client Add(Client client);
+        Task<Client> Add(Client client);
 
-        Client Update(Client client);
+        Task<Client> Update(Client client);
 
-        Client Update(int id, JsonPatchDocument client);
+        Task<Client> Update(int id, JsonPatchDocument client);
 
-        void Delete(int id);
+        Task Delete(int id);
     }
 }

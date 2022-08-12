@@ -14,35 +14,35 @@ namespace Sequences.Data.Clients
             _context = context;
         }
 
-        public Client Add(Client client)
+        public async Task<Client> Add(Client client)
         {
-            _context.Add(client);
-            _context.SaveChanges();
+            await _context.AddAsync(client);
+            await _context.SaveChangesAsync();
 
             return client;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var client = _context.Clients.Find(id);
+            var client = await _context.Clients.FindAsync(id);
             if (client == null)
             {
                 throw new EntityNotFoundException($"Client with id {id} not found");
             }
-            _ = _context.Remove(client);
-            _context.SaveChanges();
+            _context.Remove(client);
+            await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<Client> GetAll()
+        public async Task<List<Client>> GetAll()
         {
-            var clients = _context.Clients.AsNoTracking();
+            var clients = await _context.Clients.AsNoTracking().ToListAsync();
 
             return clients;
         }
 
-        public Client GetById(int id)
+        public async Task<Client> GetById(int id)
         {
-            var client = _context.Clients.Find(id);
+            var client = await _context.Clients.FindAsync(id);
             if (client == null)
             {
                 throw new EntityNotFoundException($"Client with id {id} not found");
@@ -51,29 +51,29 @@ namespace Sequences.Data.Clients
             return client;
         }
 
-        public Client Update(Client client)
+        public async Task<Client> Update(Client client)
         {
-            var curClient = _context.Clients.Find(client.Id);
+            var curClient = await _context.Clients.FindAsync(client.Id);
             if (curClient == null)
             {
                 throw new EntityNotFoundException($"Client with id {client.Id} not found");
             }
             curClient.Name = client.Name;
             curClient.Description = client.Description;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return client;
         }
 
-        public Client Update(int id, JsonPatchDocument client)
+        public async Task<Client> Update(int id, JsonPatchDocument client)
         {
-            var curClient = _context.Clients.Find(id);
+            var curClient = await _context.Clients.FindAsync(id);
             if (curClient == null)
             {
                 throw new EntityNotFoundException($"Client with id {id} not found");
             }
             client.ApplyTo(curClient);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return curClient;
         }

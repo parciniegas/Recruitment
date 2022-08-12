@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using Sequences.Data.Clients;
 
 namespace Sequences.Services.Clients
@@ -24,51 +25,52 @@ namespace Sequences.Services.Clients
 
         #region Public Methods
 
-        public List<Client> GetClients()
+        public async Task<List<Client>> GetClients()
         {
-            var clients = _repository.GetAll()
+            var dbClients = await _repository.GetAll();
+            var clients = dbClients
                 .Select(c => new Client(c.Id, c.Name, c.Description))
                 .ToList();
 
             return clients;
         }
 
-        public Client GetClientById(int id)
+        public async Task<Client> GetClientById(int id)
         {
-            var client = _repository.GetById(id);
+            var client = await _repository.GetById(id);
 
             return new Client(client.Id, client.Name, client.Description);
         }
 
-        public Client Add(Client client)
+        public async Task<Client> Add(Client client)
         {
             var dbClient = new Data.Clients.Entities.Client(client.Id, client.Name, client.Description);
-            var _client = _repository.Add(dbClient);
+            var _client = await _repository.Add(dbClient);
             (client.Id, client.Name, client.Description) = (_client.Id, _client.Name, _client.Description);
 
             return client;
         }
 
-        public Client Update(Client client)
+        public async Task<Client> Update(Client client)
         {
             var dbClient = new Data.Clients.Entities.Client(client.Id, client.Name, client.Description);
-            var _client = _repository.Update(dbClient);
+            var _client = await _repository.Update(dbClient);
             (client.Id, client.Name, client.Description) = (_client.Id, _client.Name, _client.Description);
 
             return client;
         }
 
-        public Client Update(int id, JsonPatchDocument clientDocument)
+        public async Task<Client> Update(int id, JsonPatchDocument clientDocument)
         {
-            var dbClient = _repository.Update(id, clientDocument);
+            var dbClient = await _repository.Update(id, clientDocument);
             var client = new Client(dbClient.Id, dbClient.Name, dbClient.Description);
 
             return client;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            _repository.Delete(id);
+            await _repository.Delete(id);
         }
 
         #endregion Public Methods
