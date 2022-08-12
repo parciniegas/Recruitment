@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using Sequences.Data;
 using Sequences.Data.Clients;
@@ -8,9 +11,18 @@ using Sequences.Services.Clients;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+     .AddJwtBearer(options =>
+     {
+         options.Authority = builder.Configuration["Auth0:Domain"];
+         options.Audience = builder.Configuration["Auth0:Audience"];
+         options.TokenValidationParameters = new TokenValidationParameters
+         {
+             NameClaimType = ClaimTypes.NameIdentifier
+         };
+     });
 
 builder.Services.AddApiVersioning(
         options =>
@@ -49,6 +61,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

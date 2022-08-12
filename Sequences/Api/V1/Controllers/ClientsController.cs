@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sequences.Data.Exceptions;
 using Sequences.Services.Clients;
 
 namespace Sequences.Api.V1.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("v{version:apiVersion}/clients")]
     public class ClientsController : ControllerBase
@@ -24,6 +26,7 @@ namespace Sequences.Api.V1.Controllers
 
         #region Public Methods
 
+        
         [HttpGet()]
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(IEnumerable<Client>), statusCode: StatusCodes.Status200OK)]
