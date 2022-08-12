@@ -2,10 +2,10 @@
 using Sequences.Data.Exceptions;
 using Sequences.Services.Clients;
 
-namespace Sequences.Api.Clients
+namespace Sequences.Api.V1.Controllers
 {
-    [Route("clients")]
     [ApiController]
+    [Route("v{version:apiVersion}/clients")]
     public class ClientsController : ControllerBase
     {
         #region Private Fields
@@ -23,9 +23,9 @@ namespace Sequences.Api.Clients
 
         #region Public Methods
 
-        [HttpGet]
-        [Route("/")]
-        [ProducesResponseType(typeof(IEnumerable<Client>), 200)]
+        [HttpGet()]
+        [Produces(contentType: "application/json")]
+        [ProducesResponseType(typeof(IEnumerable<Client>), statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public ActionResult<List<Client>> GetClients()
         {
@@ -41,8 +41,8 @@ namespace Sequences.Api.Clients
             }
         }
 
-        [HttpGet]
-        [Route("/{id}")]
+        [HttpGet("{id}")]
+        [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
@@ -67,8 +67,8 @@ namespace Sequences.Api.Clients
             }
         }
 
-        [HttpPost]
-        [Route("/")]
+        [HttpPost()]
+        [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public ActionResult<Client> Add([FromBody] Client client)
@@ -87,7 +87,7 @@ namespace Sequences.Api.Clients
         }
 
         [HttpPut]
-        [Route("/")]
+        [Produces(contentType: "application/json")]
         public ActionResult<Client> Update([FromBody] Client client)
         {
             try
@@ -109,8 +109,8 @@ namespace Sequences.Api.Clients
             }
         }
 
-        [HttpDelete]
-        [Route("/{id}")]
+        [HttpDelete("{id}")]
+        [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
@@ -119,7 +119,7 @@ namespace Sequences.Api.Clients
             try
             {
                 _service.Delete(id);
-                return Ok("client deleted");
+                return Ok(new { result = "client deleted" });
             }
             catch (EntityNotFoundException ex)
             {

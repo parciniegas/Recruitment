@@ -1,4 +1,5 @@
-﻿using Sequences.Data.Clients.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Sequences.Data.Clients.Entities;
 using Sequences.Data.Exceptions;
 
 namespace Sequences.Data.Clients
@@ -33,7 +34,8 @@ namespace Sequences.Data.Clients
 
         public IEnumerable<Client> GetAll()
         {
-            var clients = _context.Clients;
+            var clients = _context.Clients.AsNoTracking();
+
             return clients;
         }
 
@@ -56,6 +58,7 @@ namespace Sequences.Data.Clients
                 throw new EntityNotFoundException($"Client with id {client.Id} not found");
             }
             curClient.Name = client.Name;
+            curClient.Description = client.Description;
             _context.SaveChanges();
 
             return client;
