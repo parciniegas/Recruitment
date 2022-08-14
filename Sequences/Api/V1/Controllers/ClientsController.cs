@@ -26,8 +26,7 @@ namespace Sequences.Api.V1.Controllers
 
         #region Public Methods
 
-        
-        [HttpGet()]
+        [HttpGet]
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(IEnumerable<Client>), statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
@@ -51,7 +50,7 @@ namespace Sequences.Api.V1.Controllers
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Client>> GetClientById(int id)
+        public async Task<ActionResult<Client>> GetClientById([FromRoute] int id)
         {
             try
             {
@@ -72,7 +71,7 @@ namespace Sequences.Api.V1.Controllers
             }
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
@@ -81,7 +80,13 @@ namespace Sequences.Api.V1.Controllers
             try
             {
                 client = await _service.Add(client);
-                return Ok(client);
+                return CreatedAtAction(nameof(GetClientById), new { id = client.Id }, client);
+            }
+            catch (EntityAlreadyExistException ex)
+            {
+                _logger.LogError(message: "Controller: {Controller} Action: {Action}, Exception: {Message} StackTrace: {StackTrace}",
+                    ControllerContext.ActionDescriptor.ControllerName, ControllerContext.ActionDescriptor.ActionName, ex.Message, ex.StackTrace);
+                return Problem(ex.Message, statusCode: StatusCodes.Status400BadRequest);
             }
             catch (Exception ex)
             {
@@ -93,6 +98,8 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpPut]
         [Produces(contentType: "application/json")]
+        [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Client>> Update([FromBody] Client client)
         {
             try
@@ -116,6 +123,8 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpPatch("{id}")]
         [Produces(contentType: "application/json")]
+        [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Client>> UpdateOrCreate([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
         {
             try

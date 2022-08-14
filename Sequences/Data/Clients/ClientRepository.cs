@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Sequences.Data.Clients.Entities;
 using Sequences.Data.Exceptions;
 
@@ -7,6 +8,8 @@ namespace Sequences.Data.Clients
 {
     public class ClientRepository : IClientRepository
     {
+        private const string KeyDuplicated = "23505";
+
         private readonly Context _context;
 
         public ClientRepository(Context context)
@@ -16,8 +19,17 @@ namespace Sequences.Data.Clients
 
         public async Task<Client> Add(Client client)
         {
-            await _context.AddAsync(client);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.AddAsync(client);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.GetType() == typeof(PostgresException))
+            {
+                if (((PostgresException)(ex.InnerException)).SqlState == KeyDuplicated)
+                    throw new EntityAlreadyExistException($"A client with name <<{client.Name}>> already exist.");
+                throw;
+            }
 
             return client;
         }
