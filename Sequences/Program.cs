@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using Sequences.Data;
@@ -14,15 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-     .AddJwtBearer(options =>
-     {
-         options.Authority = builder.Configuration["Auth0:Domain"];
-         options.Audience = builder.Configuration["Auth0:Audience"];
-         options.TokenValidationParameters = new TokenValidationParameters
-         {
-             NameClaimType = ClaimTypes.NameIdentifier
-         };
-     });
+        .AddJwtBearer(options =>
+        {
+            options.Authority = builder.Configuration["Auth0:Domain"];
+            options.Audience = builder.Configuration["Auth0:Audience"];
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                NameClaimType = ClaimTypes.NameIdentifier
+            };
+        });
 
 builder.Services.AddApiVersioning(
         options =>
@@ -33,6 +34,14 @@ builder.Services.AddApiVersioning(
             // automatically applies an api version based on the name of the defining controller's namespace
             options.Conventions.Add(new VersionByNamespaceConvention());
         });
+
+builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = HttpLoggingFields.All;
+            options.RequestBodyLogLimit = 4096;
+            options.ResponseBodyLogLimit = 4096;
+        });
+
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<Context>();
 
@@ -63,6 +72,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHttpLogging();
 
 app.MapControllers();
 
