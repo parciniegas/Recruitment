@@ -23,6 +23,8 @@ namespace Sequences.Data.Clients
             {
                 await _context.AddAsync(client);
                 await _context.SaveChangesAsync();
+
+                return client;
             }
             catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.GetType() == typeof(PostgresException))
             {
@@ -30,8 +32,6 @@ namespace Sequences.Data.Clients
                     throw new EntityAlreadyExistException($"A client with name <<{client.Name}>> already exist.");
                 throw;
             }
-
-            return client;
         }
 
         public async Task Delete(int id)
@@ -65,16 +65,16 @@ namespace Sequences.Data.Clients
 
         public async Task<Client> Update(Client client)
         {
-            var curClient = await _context.Clients.FindAsync(client.Id);
+            var curClient = await _context.Clients.FindAsync(client.ClientId);
             if (curClient == null)
             {
-                throw new EntityNotFoundException($"Client with id {client.Id} not found");
+                throw new EntityNotFoundException($"Client with id {client.ClientId} not found");
             }
             curClient.Name = client.Name;
             curClient.Description = client.Description;
             await _context.SaveChangesAsync();
 
-            return client;
+            return curClient;
         }
 
         public async Task<Client> Update(int id, JsonPatchDocument client)

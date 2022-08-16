@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Sequences.Data.Subjects.Entities;
 
 namespace Sequences.Data.Clients.Entities
 {
@@ -8,9 +9,9 @@ namespace Sequences.Data.Clients.Entities
     {
         #region Constuctors
 
-        public Client(int id, string name, string? description)
+        public Client(int clientId, string name, string? description)
         {
-            Id = id;
+            ClientId = clientId;
             Name = name;
             Description = description;
         }
@@ -20,7 +21,7 @@ namespace Sequences.Data.Clients.Entities
         #region Properties
 
         [Key]
-        public int Id { get; set; }
+        public int ClientId { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -29,6 +30,7 @@ namespace Sequences.Data.Clients.Entities
         [MaxLength(4000)]
         public string? Description { get; set; }
 
+        public ICollection<Subject>? Subjects { get; set; }
         #endregion Properties
     }
 }
