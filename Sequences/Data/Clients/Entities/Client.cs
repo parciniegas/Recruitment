@@ -23,14 +23,14 @@ namespace Sequences.Data.Clients.Entities
         [Key]
         public int ClientId { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required, MaxLength(200)]
         public string Name { get; set; }
 
         [MaxLength(4000)]
         public string? Description { get; set; }
 
         public ICollection<Subject>? Subjects { get; set; }
+
         #endregion Properties
     }
 }

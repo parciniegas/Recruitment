@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sequences.Api.V1.Model;
 using Sequences.Data.Exceptions;
-using Sequences.Data.Subjects.Entities;
 using Sequences.Services.Subjets;
 
 namespace Sequences.Api.V1.Controllers

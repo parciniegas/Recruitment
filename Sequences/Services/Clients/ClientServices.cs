@@ -29,7 +29,7 @@ namespace Sequences.Services.Clients
         {
             var dbClients = await _repository.GetAll();
             var clients = dbClients
-                .Select(c => new Client(c.Id, c.Name, c.Description))
+                .Select(c => new Client(c.ClientId, c.Name, c.Description))
                 .ToList();
 
             return clients;
@@ -39,14 +39,14 @@ namespace Sequences.Services.Clients
         {
             var client = await _repository.GetById(id);
 
-            return new Client(client.Id, client.Name, client.Description);
+            return new Client(client.ClientId, client.Name, client.Description);
         }
 
         public async Task<Client> Add(Client client)
         {
             var dbClient = new Data.Clients.Entities.Client(client.Id, client.Name, client.Description);
             var _client = await _repository.Add(dbClient);
-            (client.Id, client.Name, client.Description) = (_client.Id, _client.Name, _client.Description);
+            (client.Id, client.Name, client.Description) = (_client.ClientId, _client.Name, _client.Description);
 
             return client;
         }
@@ -55,7 +55,7 @@ namespace Sequences.Services.Clients
         {
             var dbClient = new Data.Clients.Entities.Client(client.Id, client.Name, client.Description);
             var _client = await _repository.Update(dbClient);
-            (client.Id, client.Name, client.Description) = (_client.Id, _client.Name, _client.Description);
+            (client.Id, client.Name, client.Description) = (_client.ClientId, _client.Name, _client.Description);
 
             return client;
         }
@@ -63,7 +63,7 @@ namespace Sequences.Services.Clients
         public async Task<Client> Update(int id, JsonPatchDocument clientDocument)
         {
             var dbClient = await _repository.Update(id, clientDocument);
-            var client = new Client(dbClient.Id, dbClient.Name, dbClient.Description);
+            var client = new Client(dbClient.ClientId, dbClient.Name, dbClient.Description);
 
             return client;
         }
