@@ -8,6 +8,8 @@ using NLog.Web;
 using Sequences.Data;
 using Sequences.Data.Clients;
 using Sequences.Services.Clients;
+using Sequences.Services.Subjets;
+using Sequences.Data.Subjects;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +72,8 @@ builder.Services.AddDbContext<Context>(options =>
 // Add application services
 builder.Services.AddScoped<IClientsService, ClientServices>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<ISubjectsService, SubjectsService>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 
 var app = builder.Build();
 

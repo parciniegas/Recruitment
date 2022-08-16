@@ -47,8 +47,8 @@ namespace Sequences.Data.Subjects.Entities
         [Required]
         public int Value { get; set; }
 
-        [Required, MaxLength(50)]
-        public string Sequence { get; set; }
+        [MaxLength(50)]
+        public string? Sequence { get; set; }
 
         [MaxLength(4000)]
         public string? Description { get; set; }

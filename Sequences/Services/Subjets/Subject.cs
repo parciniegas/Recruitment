@@ -2,8 +2,15 @@
 {
     public class Subject
     {
-        public Subject(string name, string? prefix, string? suffix, string rule, int startAt, int endAt, int value, string sequence, string? description)
+        public Subject()
         {
+
+        }
+
+        public Subject(int subjectId, int clientId, string name, string? prefix, string? suffix, string rule, int startAt, int endAt, int value, string sequence, string? description)
+        {
+            SubjectId = subjectId;
+            ClientId = clientId;
             Name = name;
             Prefix = prefix;
             Suffix = suffix;
@@ -15,6 +22,8 @@
             Description = description;
         }
 
+        public int SubjectId { get; set; }
+        public int ClientId { get; set; }
         public string Name { get; set; }
         public string? Prefix { get; set; }
         public string? Suffix { get; set; }

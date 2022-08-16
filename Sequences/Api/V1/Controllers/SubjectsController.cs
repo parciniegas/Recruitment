@@ -28,14 +28,14 @@ namespace Sequences.Api.V1.Controllers
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(ResponseSubject), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseSubject>> Create([FromBody] RequestSubject requestSubject)
+        public async Task<ActionResult<ResponseSubject>> Create([FromBody] CreateSubject createSubject)
         {
             try
             {
-                var subject = _mapper.Map<Subject>(requestSubject);
+                var subject = _mapper.Map<Subject>(createSubject);
                 var responseSubject = _mapper.Map<ResponseSubject>(await _subjectsService.Add(subject));
 
-                return CreatedAtAction(nameof(GetSubjectById), new { id = responseSubject.Id }, responseSubject);
+                return CreatedAtAction(nameof(GetSubjectById), new { id = responseSubject.SubjectId }, responseSubject);
             }
             catch (EntityAlreadyExistException ex)
             {
@@ -99,13 +99,13 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpPut]
         [Produces(contentType: "application/json")]
-        [ProducesResponseType(typeof(RequestSubject), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UpdateSubject), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ResponseSubject>> Update([FromBody] RequestSubject requestSubject)
+        public async Task<ActionResult<ResponseSubject>> Update([FromBody] UpdateSubject updateSubject)
         {
             try
             {
-                var subject = _mapper.Map<Subject>(requestSubject);
+                var subject = _mapper.Map<Subject>(updateSubject);
                 var responseSubjet = _mapper.Map<ResponseSubject>(await _subjectsService.Update(subject));
 
                 return Ok(responseSubjet);
@@ -152,7 +152,7 @@ namespace Sequences.Api.V1.Controllers
 
         [HttpDelete("{id}")]
         [Produces(contentType: "application/json")]
-        [ProducesResponseType(typeof(Subject), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<string>> Delete([FromRoute] int id)

@@ -1,37 +1,68 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Sequences.Data.Subjects;
+using db = Sequences.Data.Subjects.Entities;
 
 namespace Sequences.Services.Subjets
 {
     public class SubjectsService : ISubjectsService
     {
-        public Task<Subject> Add(Subject subject)
+        private readonly ILogger<SubjectsService> _logger;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IMapper _mapper;
+
+        public SubjectsService(ISubjectRepository subjectRepository, ILogger<SubjectsService> logger, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _subjectRepository = subjectRepository;
+            _logger = logger;
+            _mapper = mapper;
         }
 
-        public Task Delete(int id)
+        public async Task<Subject> Add(Subject subject)
         {
-            throw new NotImplementedException();
+            var dbSubject = _mapper.Map<db.Subject>(subject);
+            dbSubject = await _subjectRepository.Add(dbSubject);
+            subject = _mapper.Map<Subject>(dbSubject);
+
+            return subject;
         }
 
-        public Task<Subject> GetSubjectById(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await _subjectRepository.Delete(id);
         }
 
-        public Task<List<Subject>> GetSubjects()
+        public async Task<Subject> GetSubjectById(int id)
         {
-            throw new NotImplementedException();
+            var dbSubject = await _subjectRepository.GetById(id);
+            var subject = _mapper.Map<Subject>(dbSubject);
+
+            return subject;
         }
 
-        public Task<Subject> Update(Subject subject)
+        public async Task<List<Subject>> GetSubjects()
         {
-            throw new NotImplementedException();
+            var dbSubjects = await _subjectRepository.GetAll();
+            var subjects = _mapper.Map<List<Subject>>(dbSubjects);
+
+            return subjects;
         }
 
-        public Task<Subject> Update(int id, JsonPatchDocument subjectDocument)
+        public async Task<Subject> Update(Subject subject)
         {
-            throw new NotImplementedException();
+            var dbSubject = _mapper.Map<db.Subject>(subject);
+            dbSubject = await _subjectRepository.Update(dbSubject);
+            subject = _mapper.Map<Subject>(dbSubject);
+
+            return subject;
+        }
+
+        public async Task<Subject> Update(int id, JsonPatchDocument subjectDocument)
+        {
+            var dbSubject = await _subjectRepository.Update(id, subjectDocument);
+            var subject = _mapper.Map<Subject>(dbSubject);
+
+            return subject;
         }
     }
 }
