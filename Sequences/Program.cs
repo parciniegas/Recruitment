@@ -14,10 +14,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
+
+var domain = builder.Configuration["Auth0:Domain"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
-            options.Authority = builder.Configuration["Auth0:Domain"];
+            options.Authority = domain;
             options.Audience = builder.Configuration["Auth0:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -54,8 +56,14 @@ builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
 
-builder.Services.AddDbContext<Context>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<Context>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        option => option.EnableRetryOnFailure(
+                maxRetryCount: 3,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null))
+    );
 
 // Add application services
 builder.Services.AddScoped<IClientsService, ClientServices>();
