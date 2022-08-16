@@ -125,7 +125,7 @@ namespace Sequences.Api.V1.Controllers
         [Produces(contentType: "application/json")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Client>> UpdateOrCreate([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
+        public async Task<ActionResult<Client>> Update([FromRoute] int id, [FromBody] JsonPatchDocument clientDocument)
         {
             try
             {
