@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sequences.Api.V1.Model;
 using Sequences.Data.Exceptions;
 using Sequences.Services.Subjets;
+using Sequences.Api.V1.Maps;
 
 namespace Sequences.Api.V1.Controllers
 {
@@ -15,13 +15,13 @@ namespace Sequences.Api.V1.Controllers
     {
         private readonly ILogger<SubjectsController> _logger;
         private readonly ISubjectsService _subjectsService;
-        private readonly IMapper _mapper;
+        private readonly Mapper _mapper;
 
-        public SubjectsController(ISubjectsService subjectsService, ILogger<SubjectsController> logger, IMapper mapper)
+        public SubjectsController(ISubjectsService subjectsService, ILogger<SubjectsController> logger)
         {
             _subjectsService = subjectsService;
             _logger = logger;
-            _mapper = mapper;
+            _mapper = new Mapper();
         }
 
         [HttpPost]
@@ -32,8 +32,9 @@ namespace Sequences.Api.V1.Controllers
         {
             try
             {
-                var subject = _mapper.Map<Subject>(createSubject);
-                var responseSubject = _mapper.Map<ResponseSubject>(await _subjectsService.Add(subject));
+                var subject = _mapper.GetSubjectForCreate(createSubject);
+                subject = await _subjectsService.Add(subject);
+                var responseSubject = _mapper.GetResponseSubject(subject);
 
                 return CreatedAtAction(nameof(GetSubjectById), new { id = responseSubject.SubjectId }, responseSubject);
             }
@@ -59,9 +60,10 @@ namespace Sequences.Api.V1.Controllers
         {
             try
             {
-                var subjects = _mapper.Map<List<ResponseSubject>>(await _subjectsService.GetSubjects());
+                var subjects = await _subjectsService.GetSubjects();
+                var responseSubjects = _mapper.GetResponseSubjects(subjects);
 
-                return Ok(subjects);
+                return Ok(responseSubjects);
             }
             catch (Exception ex)
             {
@@ -80,8 +82,10 @@ namespace Sequences.Api.V1.Controllers
         {
             try
             {
-                var subject = _mapper.Map<ResponseSubject>(await _subjectsService.GetSubjectById(id));
-                return Ok(subject);
+                var subject = await _subjectsService.GetSubjectById(id);
+                var responseSubject = _mapper.GetResponseSubject(subject);
+
+                return Ok(responseSubject);
             }
             catch (EntityNotFoundException ex)
             {
@@ -105,8 +109,9 @@ namespace Sequences.Api.V1.Controllers
         {
             try
             {
-                var subject = _mapper.Map<Subject>(updateSubject);
-                var responseSubjet = _mapper.Map<ResponseSubject>(await _subjectsService.Update(subject));
+                var subject = _mapper.GetSubjectForUpdate(updateSubject);
+                subject = await _subjectsService.Update(subject);
+                var responseSubjet = _mapper.GetResponseSubject(subject);
 
                 return Ok(responseSubjet);
             }
@@ -132,7 +137,8 @@ namespace Sequences.Api.V1.Controllers
         {
             try
             {
-                var responseSubject = _mapper.Map<ResponseSubject>(await _subjectsService.Update(id, subjectDocument));
+                var subject = await _subjectsService.Update(id, subjectDocument);
+                var responseSubject = _mapper.GetResponseSubject(subject);
 
                 return Ok(responseSubject);
             }

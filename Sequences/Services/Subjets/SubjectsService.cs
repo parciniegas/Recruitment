@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Sequences.Data.Subjects;
-using db = Sequences.Data.Subjects.Entities;
+using Sequences.Services.Maps;
 
 namespace Sequences.Services.Subjets
 {
@@ -9,20 +8,20 @@ namespace Sequences.Services.Subjets
     {
         private readonly ILogger<SubjectsService> _logger;
         private readonly ISubjectRepository _subjectRepository;
-        private readonly IMapper _mapper;
+        private readonly Mapper _mapper;
 
-        public SubjectsService(ISubjectRepository subjectRepository, ILogger<SubjectsService> logger, IMapper mapper)
+        public SubjectsService(ISubjectRepository subjectRepository, ILogger<SubjectsService> logger)
         {
             _subjectRepository = subjectRepository;
             _logger = logger;
-            _mapper = mapper;
+            _mapper = new Mapper();
         }
 
         public async Task<Subject> Add(Subject subject)
         {
-            var dbSubject = _mapper.Map<db.Subject>(subject);
+            var dbSubject = _mapper.GetDbSubject(subject);
             dbSubject = await _subjectRepository.Add(dbSubject);
-            subject = _mapper.Map<Subject>(dbSubject);
+            subject = _mapper.GetSubject(dbSubject);
 
             return subject;
         }
@@ -35,7 +34,7 @@ namespace Sequences.Services.Subjets
         public async Task<Subject> GetSubjectById(int id)
         {
             var dbSubject = await _subjectRepository.GetById(id);
-            var subject = _mapper.Map<Subject>(dbSubject);
+            var subject = _mapper.GetSubject(dbSubject);
 
             return subject;
         }
@@ -43,16 +42,16 @@ namespace Sequences.Services.Subjets
         public async Task<List<Subject>> GetSubjects()
         {
             var dbSubjects = await _subjectRepository.GetAll();
-            var subjects = _mapper.Map<List<Subject>>(dbSubjects);
+            var subjects = _mapper.GetSubjects(dbSubjects);
 
             return subjects;
         }
 
         public async Task<Subject> Update(Subject subject)
         {
-            var dbSubject = _mapper.Map<db.Subject>(subject);
+            var dbSubject = _mapper.GetDbSubject(subject);
             dbSubject = await _subjectRepository.Update(dbSubject);
-            subject = _mapper.Map<Subject>(dbSubject);
+            subject = _mapper.GetSubject(dbSubject);
 
             return subject;
         }
@@ -60,7 +59,7 @@ namespace Sequences.Services.Subjets
         public async Task<Subject> Update(int id, JsonPatchDocument subjectDocument)
         {
             var dbSubject = await _subjectRepository.Update(id, subjectDocument);
-            var subject = _mapper.Map<Subject>(dbSubject);
+            var subject = _mapper.GetSubject(dbSubject);
 
             return subject;
         }

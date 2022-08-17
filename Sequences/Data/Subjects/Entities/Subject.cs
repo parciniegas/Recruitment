@@ -7,8 +7,10 @@ namespace Sequences.Data.Subjects.Entities
     [Index(nameof(ClientId), nameof(Name), IsUnique = true)]
     public class Subject
     {
-        public Subject(string name, string? prefix, string? suffix, string rule, int startAt, int endAt, int value, string sequence, string? description)
+        public Subject(int subjectId, int clientId, string name, string? prefix, string? suffix, string rule, int startAt, int endAt, int value, string? sequence, string? description)
         {
+            SubjectId = subjectId;
+            ClientId = clientId;
             Name = name;
             Prefix = prefix;
             Suffix = suffix;

@@ -63,7 +63,7 @@ namespace Sequences.Api.V1.Model
 
     public class ResponseSubject : BaseSubject
     {
-        public ResponseSubject(int clientId, int subjectId, string name, string? prefix, string? suffix, string rule, int startAt, int endAt, int value, string sequence, string? description)
+        public ResponseSubject(int clientId, int subjectId, string name, string? prefix, string? suffix, string? rule, int startAt, int endAt, int value, string? sequence, string? description)
             : base(name, startAt, endAt, description)
         {
             ClientId = clientId;
@@ -79,8 +79,8 @@ namespace Sequences.Api.V1.Model
         public int SubjectId { get; set; }
         public string? Prefix { get; set; }
         public string? Suffix { get; set; }
-        public string Rule { get; set; }
+        public string? Rule { get; set; }
         public int Value { get; set; }
-        public string Sequence { get; set; }
+        public string? Sequence { get; set; }
     }
 }

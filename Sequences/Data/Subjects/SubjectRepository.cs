@@ -28,7 +28,7 @@ namespace Sequences.Data.Subjects
             catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.GetType() == typeof(PostgresException))
             {
                 if (((PostgresException)(ex.InnerException)).SqlState == KeyDuplicated)
-                    throw new EntityAlreadyExistException($"A client with name <<{subject.Name}>> already exist.");
+                    throw new EntityAlreadyExistException($"A subject with name <<{subject.Name}>> already exist.");
                 throw;
             }
         }
