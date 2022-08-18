@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.JsonPatch;
 using Sequences.Data.Subjects;
 using Sequences.Services.Maps;
+using Sequences.Services.Subjets.Rules;
 
 namespace Sequences.Services.Subjets
 {
@@ -62,6 +64,30 @@ namespace Sequences.Services.Subjets
             var subject = _mapper.GetSubject(dbSubject);
 
             return subject;
+        }
+
+        public async Task<string> GetNextSequece(int id)
+        {
+            var subject = await GetSubjectById(id);
+            var ruleApplier = ResolveRule(subject);
+            ruleApplier.Apply(ref subject);
+
+            return subject.Sequence ?? String.Empty;
+        }
+
+        private static IRule ResolveRule(Subject subject)
+        {
+            if (subject.Rule == null)
+                throw new ArgumentNullException(nameof(subject), "The Subject.Rule can not be null");
+
+            var addExp = new Regex(@"^[+]\d$");
+            var subExp = new Regex(@"^[-]\d$");
+            if (addExp.IsMatch(subject.Rule))
+                return new AdditionRule();
+            if (subExp.IsMatch(subject.Rule))
+                return new SubtrationRule();
+
+            throw new ArgumentException($"The Subject.Rule value <<{subject.Rule}>> is invalid.", nameof(subject));
         }
     }
 }

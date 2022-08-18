@@ -7,7 +7,7 @@ namespace Sequences.Api.V1.Controllers
     [ApiController]
     public class SequencesController : ControllerBase
     {
-        public string GetNext()
+        public string GetNext(int subjectId)
         {
             return string.Empty;
         }

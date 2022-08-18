@@ -62,6 +62,13 @@ namespace Sequences.Data.Subjects
             return subject;
         }
 
+        public async Task<string> GetNextSequence(int subjectId)
+        {
+            var subject = await GetById(subjectId);
+
+            return string.Empty;
+        }
+
         public async Task<Subject> Update(Subject subject)
         {
             var curSubject = await _context.Subjects.FindAsync(subject.SubjectId);

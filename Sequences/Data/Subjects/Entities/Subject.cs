@@ -54,5 +54,8 @@ namespace Sequences.Data.Subjects.Entities
 
         [MaxLength(4000)]
         public string? Description { get; set; }
+
+        [ConcurrencyCheck]
+        public DateTime LastUpdate { get; set; }
     }
 }

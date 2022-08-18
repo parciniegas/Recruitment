@@ -15,5 +15,7 @@ namespace Sequences.Services.Subjets
         Task<Subject> Update(int id, JsonPatchDocument subjectDocument);
 
         Task Delete(int id);
+
+        Task<string> GetNextSequece(int id);
     }
 }
