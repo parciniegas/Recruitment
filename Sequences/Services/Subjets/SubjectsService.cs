@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using Sequences.Data.Subjects;
 using Sequences.Services.Maps;
 using Sequences.Services.Subjets.Rules;
@@ -68,9 +70,28 @@ namespace Sequences.Services.Subjets
 
         public async Task<string> GetNextSequece(int id)
         {
+            IRule rule;
+            var count = 0;
+            const int limit = 3;
             var subject = await GetSubjectById(id);
-            var ruleApplier = ResolveRule(subject);
-            ruleApplier.Apply(ref subject);
+
+            while (count < limit)
+            {
+                try
+                {
+                    rule = ResolveRule(subject);
+                    rule.Apply(ref subject);
+                    await Update(subject);
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    _logger.LogError("Squences was changed, retry {count}, {message}", count, ex.Message);
+                    count++;
+                    if (count == limit)
+                        throw new TimeoutException("Timeout getting next sequence");
+                    subject = await GetSubjectById(id);
+                }
+            }
 
             return subject.Sequence ?? String.Empty;
         }

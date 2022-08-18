@@ -11,5 +11,12 @@ namespace Sequences.Data
 
         public DbSet<Client> Clients => Set<Client>();
         public DbSet<Subject> Subjects => Set<Subject>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Subject>()
+                .Property(b => b.LastUpdate)
+                .HasDefaultValueSql("now()");
+        }
     }
 }
