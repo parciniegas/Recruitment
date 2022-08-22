@@ -56,7 +56,7 @@ namespace Sequences.Data.Subjects
             var subject = await _context.Subjects.FindAsync(id);
             if (subject == null)
             {
-                throw new EntityNotFoundException($"Client with id {id} not found");
+                throw new EntityNotFoundException($"Subject with id {id} not found");
             }
 
             return subject;
@@ -79,12 +79,27 @@ namespace Sequences.Data.Subjects
             return curSubject;
         }
 
+        public async Task<Subject> Update(int id, int value, string sequence)
+        {
+            var subject = await _context.Subjects.FindAsync(id);
+            if (subject == null)
+            {
+                throw new EntityNotFoundException($"Subject with id {id} not found");
+            }
+            subject.Value = value;
+            subject.Sequence = sequence;
+            subject.LastUpdate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return subject;
+        }
+
         public async Task<Subject> Update(int id, JsonPatchDocument subjectDocument)
         {
             var curSubject = await _context.Subjects.FindAsync(id);
             if (curSubject == null)
             {
-                throw new EntityNotFoundException($"Client with id {id} not found");
+                throw new EntityNotFoundException($"Subject with id {id} not found");
             }
             subjectDocument.ApplyTo(curSubject);
             await _context.SaveChangesAsync();

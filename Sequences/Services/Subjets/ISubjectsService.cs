@@ -16,6 +16,6 @@ namespace Sequences.Services.Subjets
 
         Task Delete(int id);
 
-        Task<string> GetNextSequece(int id);
+        Task<string> NextSequece(int id);
     }
 }

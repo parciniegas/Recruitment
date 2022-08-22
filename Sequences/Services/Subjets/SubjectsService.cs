@@ -69,36 +69,36 @@ namespace Sequences.Services.Subjets
             return subject;
         }
 
-        public async Task<string> GetNextSequece(int id)
+        public async Task<string> NextSequece(int id)
         {
             var policy = Policy.Handle<DbUpdateConcurrencyException>()
                 .WaitAndRetryAsync(retryCount: 3, sleepDurationProvider: sleep => TimeSpan.FromMilliseconds(500));
 
             var sequence = await policy.ExecuteAsync<string>(async () =>
             {
-                var subject = await GetSubjectById(id);
-                var rule = ResolveRule(subject);
+                var dbSubject = await _subjectRepository.GetById(id);
+                var subject = _mapper.GetSubject(dbSubject);
+                var rule = ResolveRule(subject.Rule ?? string.Empty);
                 rule.Apply(ref subject);
-                await Update(subject);
-                return subject.Sequence ?? string.Empty;
+                var sequence = subject.Sequence ?? string.Empty;
+                (dbSubject.Value, dbSubject.Sequence, dbSubject.LastUpdate) = (subject.Value, subject.Sequence, DateTime.UtcNow);
+                await _subjectRepository.Update(id, subject.Value, sequence);
+                return sequence;
             });
 
             return sequence;
         }
 
-        private static IRule ResolveRule(Subject subject)
+        private static IRule ResolveRule(string rule)
         {
-            if (subject.Rule == null)
-                throw new ArgumentNullException(nameof(subject), "The Subject.Rule can not be null");
-
             var addExp = new Regex(@"^[+]\d$");
             var subExp = new Regex(@"^[-]\d$");
-            if (addExp.IsMatch(subject.Rule))
+            if (addExp.IsMatch(rule))
                 return new AdditionRule();
-            if (subExp.IsMatch(subject.Rule))
+            if (subExp.IsMatch(rule))
                 return new SubtrationRule();
 
-            throw new ArgumentException($"The Subject.Rule value <<{subject.Rule}>> is invalid.", nameof(subject));
+            throw new ArgumentException($"The Subject.Rule value: {rule} is invalid.", nameof(rule));
         }
     }
 }

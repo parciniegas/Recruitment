@@ -182,5 +182,30 @@ namespace Sequences.Api.V1.Controllers
                 return Problem("could not update subject", statusCode: StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpGet("{id}/next_sequence")]
+        [Produces(contentType: "application/json")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<string>> NextSequence([FromRoute] int id)
+        {
+            try
+            {
+                return Ok(await _subjectsService.NextSequece(id));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogError(message: "Controller: {Controller} Action: {Action}, Exception: {Message} StackTrace: {StackTrace}",
+                   ControllerContext.ActionDescriptor.ControllerName, ControllerContext.ActionDescriptor.ActionName, ex.Message, ex.StackTrace);
+                return Problem($"subject with id: {id} not found", statusCode: StatusCodes.Status404NotFound);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(message: "Controller: {Controller} Action: {Action}, Exception: {Message} StackTrace: {StackTrace}",
+                   ControllerContext.ActionDescriptor.ControllerName, ControllerContext.ActionDescriptor.ActionName, ex.Message, ex.StackTrace);
+                return Problem("could not update subject", statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
