@@ -1,4 +1,4 @@
-﻿namespace Sequences.Services.Subjets
+﻿namespace Sequences.Services.Subjects
 {
     public class Subject
     {

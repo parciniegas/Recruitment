@@ -1,5 +1,5 @@
 ﻿using Sequences.Api.V1.Model;
-using Sequences.Services.Subjets;
+using Sequences.Services.Subjects;
 
 namespace Sequences.Api.V1.Maps
 {

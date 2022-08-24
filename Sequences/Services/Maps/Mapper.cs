@@ -1,4 +1,4 @@
-﻿using Sequences.Services.Subjets;
+﻿using Sequences.Services.Subjects;
 using db = Sequences.Data.Subjects.Entities;
 
 namespace Sequences.Services.Maps

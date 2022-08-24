@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sequences.Api.V1.Model;
 using Sequences.Data.Exceptions;
-using Sequences.Services.Subjets;
+using Sequences.Services.Subjects;
 using Sequences.Api.V1.Maps;
 
 namespace Sequences.Api.V1.Controllers

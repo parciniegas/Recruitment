@@ -1,4 +1,4 @@
-﻿namespace Sequences.Services.Subjets.Rules
+﻿namespace Sequences.Services.Subjects.Rules
 {
     public interface IRule
     {

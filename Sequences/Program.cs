@@ -8,7 +8,7 @@ using NLog.Web;
 using Sequences.Data;
 using Sequences.Data.Clients;
 using Sequences.Services.Clients;
-using Sequences.Services.Subjets;
+using Sequences.Services.Subjects;
 using Sequences.Data.Subjects;
 
 var builder = WebApplication.CreateBuilder(args);

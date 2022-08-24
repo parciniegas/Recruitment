@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 
-namespace Sequences.Services.Subjets
+namespace Sequences.Services.Subjects
 {
     public interface ISubjectsService
     {

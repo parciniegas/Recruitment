@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Polly;
 using Sequences.Data.Subjects;
 using Sequences.Services.Maps;
-using Sequences.Services.Subjets.Rules;
+using Sequences.Services.Subjects.Rules;
 
-namespace Sequences.Services.Subjets
+namespace Sequences.Services.Subjects
 {
     public class SubjectsService : ISubjectsService
     {
